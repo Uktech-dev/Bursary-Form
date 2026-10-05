@@ -1,7 +1,9 @@
 const bursaryForm = document.getElementById("bursaryForm");
 const submitButton = document.getElementById("submitButton");
+
 const adOnSubmit = document.getElementById("adOnSubmit");
 const countdown = document.getElementById("countdown");
+
 const shareButton = document.getElementById("shareButton");
 
 
@@ -10,31 +12,56 @@ const adLink =
   "https://repeattelegraph.com/dsc91s50?key=c19c0351ec53c34ed2ea912bd7144df6";
 
 
-// When Submit is clicked
+// PREVENT MULTIPLE SUBMISSIONS
+let submitting = false;
+
+
+// FORM SUBMISSION
 bursaryForm.addEventListener("submit", function (event) {
 
-  // Stop normal submission for now
   event.preventDefault();
 
-  // Check that all required fields are completed
+
+  // Validate form
   if (!bursaryForm.checkValidity()) {
+
     bursaryForm.reportValidity();
+
     return;
   }
 
-  // Prevent multiple clicks
+
+  // Prevent another click
+  if (submitting) {
+    return;
+  }
+
+  submitting = true;
+
+
+  // Disable Submit button immediately
   submitButton.disabled = true;
 
-  // Open the advertisement
+  submitButton.textContent = "Please Wait...";
+
+
+  /*
+    Open advertisement immediately after
+    the user clicks Submit.
+  */
+
   window.open(adLink, "_blank");
 
-  // Show popup
+
+  // Show waiting screen
   adOnSubmit.classList.add("show");
 
-  // Start from 10 seconds
+
+  // Start countdown
   let seconds = 10;
 
   countdown.textContent = seconds;
+
 
   const timer = setInterval(function () {
 
@@ -42,11 +69,12 @@ bursaryForm.addEventListener("submit", function (event) {
 
     countdown.textContent = seconds;
 
+
     if (seconds <= 0) {
 
       clearInterval(timer);
 
-      submitApplication();
+      finishSubmission();
 
     }
 
@@ -55,43 +83,57 @@ bursaryForm.addEventListener("submit", function (event) {
 });
 
 
-// Submit the application after 10 seconds
-function submitApplication() {
-
-  adOnSubmit.classList.remove("show");
+// FINISH SUBMISSION
+function finishSubmission() {
 
   /*
     IMPORTANT:
 
-    Put your REAL form submission code here.
+    This is where the REAL Gmail/form submission
+    connection will be placed.
 
-    The code below is only an example.
-
-    If your current website already has code that sends
-    the application somewhere, that code should replace
-    the alert below.
+    For now this only shows a confirmation.
   */
 
-  alert("Application submitted successfully!");
+  adOnSubmit.classList.remove("show");
 
-  // Reset the form
+
+  alert(
+    "Your application has been submitted successfully."
+  );
+
+
+  // Reset form
   bursaryForm.reset();
 
-  // Enable Submit again
+
+  // Restore button
   submitButton.disabled = false;
+
+  submitButton.textContent = "Submit Application";
+
+  submitting = false;
 }
 
+
+// WHATSAPP SHARE
 shareButton.addEventListener("click", function () {
 
-  const websiteLink = "https://uktech-dev.github.io/Bursary-Form/";
+  const websiteLink =
+    "https://uktech-dev.github.io/Bursary-Form/";
+
 
   const message =
     "Students Bursary Form 2026\n\n" +
     "Apply for student support here:\n" +
     websiteLink;
 
+
   const whatsappURL =
-    "https://wa.me/?text=" + encodeURIComponent(message);
+    "https://wa.me/?text=" +
+    encodeURIComponent(message);
+
 
   window.open(whatsappURL, "_blank");
+
 });
